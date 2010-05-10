@@ -1,0 +1,98 @@
+\documentclass[a4paper,12pt] {article}
+\usepackage{listings}
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{eurosym}
+\usepackage{makeidx}
+\usepackage[pdftex]{hyperref}
+\makeindex
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{url}
+\definecolor{vert}{rgb}{0.2,0.6,0.4} 
+\definecolor{grey}{rgb}{0.95,0.95,0.95}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{geometry}
+\usepackage{url}
+\usepackage{pst-node, pstricks}
+
+
+\def\subsubsubsection{\paragraph}
+\def\subsubsubsubsection{\subparagraph}
+
+\hypersetup{pdfpagemode=none,
+pdfstartview=FitH,
+pdfkeywords={LaTeX: document typesetting system},
+breaklinks=true,
+colorlinks=true,
+linkcolor=black,
+citecolor=black,
+filecolor=black,
+urlcolor=blue
+}
+
+
+\author{Ludovic Delaveau, Benjamin Loulier}
+\title{Plus court chemin dans un graphe}
+
+\lfoot{Ecole Nationale Superieure des Mines de Saint-Etienne}
+\cfoot{}
+\rfoot{\thepage/\pageref{LastPage}}
+\lhead{Station météo}
+\chead{}
+\rhead{Projet Info : Plus court chemin dans un graphe}
+
+\pagestyle{fancy}
+
+
+\geometry{top=2cm}	
+\geometry{bottom=3cm} % bottom margin
+
+\begin{document}
+
+\maketitle
+
+\begin{center}
+\textbf{Tuteurs}: Roland Jégoux - Michel Beigbeder\\ 
+\end{center}
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+
+Le fait de trouver le plus court chemin dans un graphe (pathfinding en anglais) trouve énormément d'applciations dans l'industrie. La première chose qui nous vient à l'esprit est évidemment les utilisations faites dans les GPS lorqu'ils nous indiquent le chemin le plus court pour aller d'une ville à un autre. D'autres utilisations moins connues sont par exemple les algorithmes associés au routage des données dans un réseau (comment aller de tel routeur à tel routeur de la fa\c con la plus efficace possible) ou à de l'optimisation de process.\\
+Nous avons pris le parti dans ce projet de ne traiter que des algorithmes trouvant exactement le chemin le plus court et pas un chemin optimisé. Nous avons décidé de ne pas utiliser des algorithmes approchés tels que A* car nous les avons déjà traité en première année dans le cadre du cours de java.\\
+Nous avons donc étudié trois algorithmes : L'algorithme de Bellman-Ford, l'algorithme de Dijkstra et l'algorithme de Dantzig.
+
+\section{Définitions et structures de données}
+\section{Présentation des trois algorithmes}
+\section{Application réalisée}
+\subsection{Tests}
+\begin{psmatrix}[mnode=circle]
+         &   &   & C & E            \\
+$\alpha$ & A & B & D &   & $\omega$ \\
+         &   &   & F
+\end{psmatrix}
+
+\psset{arrows=->,
+       labelsep=1mm,
+       shortput=nab}
+
+\ncline[linewidth=2pt]{2,1}{2,2}^{0} 
+\ncline[linewidth=2pt]{2,2}{2,3}^{2} 
+\ncline[linewidth=2pt]{2,3}{1,4}^{4} 
+\ncline{2,3}{2,4}^{4} 
+\ncline{2,3}{3,4}^{4}
+\ncline[linewidth=2pt]{1,4}{1,5}^{3}
+\ncline{2,4}{1,5}^{2}
+\ncline{3,4}{2,6}^{4}
+\ncline[linewidth=2pt]{1,5}{2,6}^{10}
+
+\end{document}
