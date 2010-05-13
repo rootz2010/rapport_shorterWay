@@ -1,8 +1,10 @@
 \documentclass[a4paper,12pt,final] {article}
 \usepackage{graphicx}
 \usepackage{listings}
-\usepackage[french]{babel}
+\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
+\usepackage[autolanguage]{numprint}
 \usepackage{eurosym}
 \usepackage{makeidx}
 \usepackage[pdftex]{hyperref}
@@ -21,12 +23,13 @@
 \usepackage{pst-node, pstricks}
 
 % for the pictures
-\graphicspath{{./include/}}
-\DeclareGraphicsExtensions{.png,.eps,.jpg}
+\graphicspath{{./include/}} % déclaration du dossier d'enregistrement des photos
+\DeclareGraphicsExtensions{.png,.eps,.jpg} % png, jpg etc. ne compile pas en DVI ... préférer l'eps
+% enlever les extensions aux photos ?
 
 % for the code
 \usepackage{listings}
-\lstset{language=C}
+\lstset{language=[ANSI]C}
 
 \def\subsubsubsection{\paragraph}
 \def\subsubsubsubsection{\subparagraph}
@@ -62,13 +65,13 @@ urlcolor=blue
 \begin{document}
 \begin{titlepage}
 
-\vspace*{\fill}
+\vspace*{\fill} % pour remplir le haut de la page
     \hspace*{\fill}
 
 \begin{center}
 
 \centering
-\includegraphics[scale=0.3]{icone}\\[2cm]
+\includegraphics[scale=0.3]{icone}\\[2cm] % bison fûté
 
 % Title
 \rule{15cm}{0.2mm} \\[0.4cm]
@@ -85,7 +88,7 @@ Ludovic \textsc{Delaveau}\\
 \begin{minipage}{0.4\textwidth}
 \begin{flushright} \large
 \emph{Tuteurs :} \\
-Roland \textsc{Jégou}\\
+Roland \textsc{Jegou}\\
 Michel \textsc{Beigbeder}\\
 \end{flushright}
 \end{minipage}
@@ -209,6 +212,11 @@ $\infty$ & $\infty$ \\
 \caption{Matrice de prédécesseur pour le noeud 0 de la figure 2}
 \end{figure}%
 
+Le code utilisé pour définir la matrice n'est pas différent de celui de la matrice d'adjacence. La taille est toujours donnée dynamiquement, avec la différence cette fois que la matrice n'a que deux colonnes.
+\begin{lstlisting}
+int ** predecessor_matrix;
+\end{lstlisting}
+
 \subsection{``Matrice de Dantzig"}
 
 Cette matrice, qui est comme son nom l'indique utilisée dans l'algorithme de Dantzig pour collecter les résultats, est une matrice ``nombre de noeuds" * ``nombre de noeuds" * 2. Dantzig, comme nous le verrons par la suite travaille sur le graphe entier, faisant  le calcul sur tous les sommets.\\
@@ -232,11 +240,22 @@ La figure 4 présente un exemple de cette matrice pour la matrice d'adjacence do
 \caption{Matrice utilisée dans l'algorithme de Dantzig}
 \end{figure}
 
+L'implémentation d'une telle matrice est faite également très simplement, suivant ce qui est fait pour la matrice de prédécesseur. On a ici une matrice à trois dimensions, et donc un triple pointeur sur un entier :
+\begin{lstlisting}
+int *** matrix;
+\end{lstlisting}
+
 \subsection{choix des types de données}
-%parler du choix d'un int pour les noeuds et valuation
+
+Nous avons choisi d'utiliser des entiers pour représenter à la fois les noeuds et aussi leur valeur. Il nous a en effet semblé suffisant de se limiter à INT\_MAX en terme de nombre de noeuds. Cela représente tout de même \nombre{2147483647} noeuds, et une plage de valuation suffisante. La machine sera tout de façon d'abord limitée en terme d'espace mémoire pour les représenter.\\
+
+Dans l'implémentation des algorithmes nous avons surtout utilisé des matrices, par la rapidité de temps d'accès qu'elles permettent, et aussi par la simplicité de l'implémentation qu'elles permettent. Gérer une liste sans index est en effet plus compliqué, avec des algorithmes qui utilisent en permanence des valeurs stockées précédemment. Nous le verrons par la suite, mais tous les algorithmes se servent des valeurs déjà calculées, ou remplacent celles déjà stockées.\\
 
 \newpage
 \section{Présentation des trois algorithmes}
+
+Nous avons donc implémenté les trois algorithmes principaux de recherche de chemins, qui sont ceux de Bellman-Ford, de Dijkstra et de Dantzig. Chacun a ses propres particularités, en particulier en terme de champ d'application.\\
+
 \subsection{Bellman-Ford}
 \subsection{Dijkstra}
 \subsection{Dantzig}
@@ -251,5 +270,11 @@ La figure 4 présente un exemple de cette matrice pour la matrice d'adjacence do
 \item{io}
 \item{contrôleur}
 \end{itemize}
+
+% utilisation des fichiers d'en-tête
+
+\subsubsection{Fichier core.c}
+
+% génération des matrices
 
 \end{document}
