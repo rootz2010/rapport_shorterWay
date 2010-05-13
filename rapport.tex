@@ -10,7 +10,6 @@
 \usepackage{float}
 \usepackage{tikz}
 \usetikzlibrary{shapes}
-\usepackage{listings}
 \usepackage{color}
 \usepackage{url}
 \definecolor{vert}{rgb}{0.2,0.6,0.4} 
@@ -21,8 +20,13 @@
 \usepackage{url}
 \usepackage{pst-node, pstricks}
 
+% for the pictures
 \graphicspath{{./include/}}
 \DeclareGraphicsExtensions{.png,.eps,.jpg}
+
+% for the code
+\usepackage{listings}
+\lstset{language=C}
 
 \def\subsubsubsection{\paragraph}
 \def\subsubsubsubsection{\subparagraph}
@@ -109,9 +113,16 @@ Nous avons pris le parti dans ce projet de ne traiter que des algorithmes trouva
 
 Ce rapport se divise en trois parties principales, présentant d'abord les graphes ainsi que les structures de données que nous avons utilisées, puis les algorithmes que nous avons implémentés. Enfin l'application que nous avons réalisée sera présentée.
 
+\newpage
 \section{Définitions et structures de données}
 \subsection{Graphe}
-\begin{figure}
+
+Un graphe simple est un couple formé de deux ensembles: \\
+$$G=(X,A)$$ avec X l'ensemble des sommets, et A l'ensemble des arêtes.\\
+$$G=(X,A,v)$$ si on ajoute la possibilité de donner une valeur différentes aux arêtes, nous avons dans ce cas un graphe valué et v est l'ensemble des valuations.\\
+Un graphe peut être non orienté, auquel cas une arête entre un sommet A et B permet aussi bien de se rendre de A en B et de en A. Il peut être aussi orienté, dans ce cas une arête ne peut être parcourue que dans un sens.
+
+\begin{figure}[htdp]
 \begin{psmatrix}[mnode=circle]
          &   &   & C & E            \\
 $\alpha$ & A & B & D &   & $\omega$ \\
@@ -135,13 +146,9 @@ $\alpha$ & A & B & D &   & $\omega$ \\
 
 \caption{Exemple de graphe valué orienté}
 \end{figure}
-Un graphe simple est un couple formé de deux ensembles: \\
-$$G=(X,A)$$ avec X l'ensemble des sommets, et A l'ensemble des arêtes.\\
-$$G=(X,A,v)$$ si on ajoute la possibilité de donner une valeur différentes aux arêtes, nous avons dans ce cas un graphe valué et v est l'ensemble des valuations.\\
-Un graphe peut être non orienté, auquel cas une arête entre un sommet A et B permet aussi bien de se rendre de A en B et de en A. Il peut être aussi orienté, dans ce cas une arête ne peut être parcourue que dans un sens.
-
 \subsection{Matrice d'adjacence}
 
+plop
 \begin{figure}[htdp]
 \begin{center}
 \begin{tabular}{|c|c|c|}
@@ -157,11 +164,33 @@ Un graphe peut être non orienté, auquel cas une arête entre un sommet A et B 
 \caption{matrice d'adjacence}
 \end{figure}%
 
+Dans notre programme nous avons utilisé un tableau d'entiers, qui sont alloués dynamiquement puisque la taille du graphe est déterminée pendant l'exécution par l'utilisateur :
+\begin{lstlisting}
+int ** matrix;
+\end{lstlisting}
+
+\subsection{Tableau de liste chaînées}
+
+Voilà la définition utilisée dans notre programme de la structure de données de liste chaînées :
+\begin{lstlisting}
+struct chained_list {
+	int number;
+	int value;
+	struct chained_list * next;
+};
+\end{lstlisting}
+
+Nous utilisons un tableau de liste chaînées, dont la déclaration est :
+\begin{lstlisting}
+struct chained_list ** list;
+\end{lstlisting}
+Il s'agit d'un double pointeur, puisqu'il est alloué également dynamiquement, pour les mêmes raisons que la matrice d'adjacence.
+
 \subsection{Matrice de prédécesseur}
 
 La matrice de prédécesseurs est l'une des deux structures de données utilisées en tant que structure de données de sortie. Elle est utilisée dans les algorithmes de Bellman-Ford et de Dijkstra, ainsi que dans une certaine mesure dans celui de Dantzig, comme nous le verrons par la suite.\\
 
-Une matrice de prédécesseur est définie pour un noeud de départ donné. Cette matrice, telle que nous l'avons implémentée dans notre programme est de dimension "nombre de noeuds" * 2, et stocke pour un noeud de départ donné ses prédécesseurs et les distances associées. La première colonne contient les poids des arcs qui relient le noeud de départ à la deuxième colonne, qui contient les prédécesseurs. On donne un poids nul à l'arc reliant le noeud de départ  à lui-même, et on indique $\infty$ comme prédecesseur.\\
+Une matrice de prédécesseur est définie pour un noeud de départ donné. Cette matrice, telle que nous l'avons implémentée dans notre programme est de dimension ``nombre de noeuds" * 2, et stocke pour un noeud de départ donné ses prédécesseurs et les distances associées. La première colonne contient les poids des arcs qui relient le noeud de départ à la deuxième colonne, qui contient les prédécesseurs. On donne un poids nul à l'arc reliant le noeud de départ  à lui-même, et on indique $\infty$ comme prédecesseur.\\
 
 La figure 3 donne la matrice de prédécesseur du noeud 0 du graphe décrit par la matrice d'adjacence donnée en exemple à la figure 2.\\
 
@@ -180,16 +209,39 @@ $\infty$ & $\infty$ \\
 \caption{Matrice de prédécesseur pour le noeud 0 de la figure 2}
 \end{figure}%
 
-\subsection{"Matrice de Dantzig"}
+\subsection{``Matrice de Dantzig"}
 
-Cette matrice, qui est comme son nom l'indique utilisée dans l'algorithme de Dantzig pour collecter les résultats, est une matrice "nombre de noeuds" * "nombre de noeuds" * 2. Dantzig, comme nous le verrons par la suite travaille sur le graphe entier, faisant  le calcul sur tous les sommets.\\
+Cette matrice, qui est comme son nom l'indique utilisée dans l'algorithme de Dantzig pour collecter les résultats, est une matrice ``nombre de noeuds" * ``nombre de noeuds" * 2. Dantzig, comme nous le verrons par la suite travaille sur le graphe entier, faisant  le calcul sur tous les sommets.\\
 
 Dès lors, tel que nous avons implémenté la matrice, il s'agit simplement d'un tableau de n matrices de prédécesseurs, où n est le nombre de noeuds dans le graphe.\\
+
+La figure 4 présente un exemple de cette matrice pour la matrice d'adjacence donnée à la figure 2. La matrice n'est ici pas le résultat d'un calcul de l'algorithme, et des chemins possibles n'y figurent pas, tandis que des chemins plus courts ne sont pas notés.\\
+
+\begin{figure}[htdp]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+(0, $\infty$) & (4, 1) & ($\infty$, $\infty$) \\
+\hline
+(8, 0) & (0, $\infty$) & (3, 2)\\
+\hline
+(42, 0) & ($\infty$, $\infty$) & (0, $\infty$)\\ 
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice utilisée dans l'algorithme de Dantzig}
+\end{figure}
 
 \subsection{choix des types de données}
 %parler du choix d'un int pour les noeuds et valuation
 
+\newpage
 \section{Présentation des trois algorithmes}
+\subsection{Bellman-Ford}
+\subsection{Dijkstra}
+\subsection{Dantzig}
+
+\newpage
 \section{Application réalisée}
 \subsection{Tests}
 \subsection{Découpage du code}
