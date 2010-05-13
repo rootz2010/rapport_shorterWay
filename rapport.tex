@@ -1,6 +1,7 @@
-\documentclass[a4paper,12pt] {article}
+\documentclass[a4paper,12pt,final] {article}
+\usepackage{graphicx}
 \usepackage{listings}
-\usepackage[english]{babel}
+\usepackage[french]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{eurosym}
 \usepackage{makeidx}
@@ -20,6 +21,8 @@
 \usepackage{url}
 \usepackage{pst-node, pstricks}
 
+\graphicspath{{./include/}}
+\DeclareGraphicsExtensions{.png,.eps,.jpg}
 
 \def\subsubsubsection{\paragraph}
 \def\subsubsubsubsection{\subparagraph}
@@ -39,12 +42,12 @@ urlcolor=blue
 \author{Ludovic Delaveau, Benjamin Loulier}
 \title{Plus court chemin dans un graphe}
 
-\lfoot{Ecole Nationale Superieure des Mines de Saint-Etienne}
+\lfoot{École Nationale Supérieure des Mines de Saint-Étienne}
 \cfoot{}
 \rfoot{\thepage/\pageref{LastPage}}
-\lhead{Station météo}
+\lhead{Plus court chemin dans un graphe}
 \chead{}
-\rhead{Projet Info : Plus court chemin dans un graphe}
+\rhead{Loulier - Delaveau}
 
 \pagestyle{fancy}
 
@@ -53,28 +56,62 @@ urlcolor=blue
 \geometry{bottom=3cm} % bottom margin
 
 \begin{document}
+\begin{titlepage}
 
-\maketitle
+\vspace*{\fill}
+    \hspace*{\fill}
 
 \begin{center}
-\textbf{Tuteurs}: Roland Jégoux - Michel Beigbeder\\ 
+
+\centering
+\includegraphics[scale=0.3]{icone}\\[2cm]
+
+% Title
+\rule{15cm}{0.2mm} \\[0.4cm]
+{ \huge \bfseries Plus court chemin dans un graphe}\\[0.4cm]
+ \rule{15cm}{0.2mm} \\[0.4cm]
+
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Auteurs :}\\
+Benjamin \textsc{Loulier}\\
+Ludovic \textsc{Delaveau}\\
+\end{flushleft}
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Tuteurs :} \\
+Roland \textsc{Jégou}\\
+Michel \textsc{Beigbeder}\\
+\end{flushright}
+\end{minipage}
+ 
+\vfill
+Projet d'Axe informatique 2009-2010
 \end{center}
+
+\end{titlepage}
+
 \newpage
 
+\setcounter{page}{2} 
 \tableofcontents
 
 \newpage
 
 \section{Introduction}
 
-Le fait de trouver le plus court chemin dans un graphe (pathfinding en anglais) trouve énormément d'applciations dans l'industrie. La première chose qui nous vient à l'esprit est évidemment les utilisations faites dans les GPS lorqu'ils nous indiquent le chemin le plus court pour aller d'une ville à un autre. D'autres utilisations moins connues sont par exemple les algorithmes associés au routage des données dans un réseau (comment aller de tel routeur à tel routeur de la fa\c con la plus efficace possible) ou à de l'optimisation de process.\\
-Nous avons pris le parti dans ce projet de ne traiter que des algorithmes trouvant exactement le chemin le plus court et pas un chemin optimisé. Nous avons décidé de ne pas utiliser des algorithmes approchés tels que A* car nous les avons déjà traité en première année dans le cadre du cours de java.\\
-Nous avons donc étudié trois algorithmes : L'algorithme de Bellman-Ford, l'algorithme de Dijkstra et l'algorithme de Dantzig.
+Le fait de trouver le plus court chemin dans un graphe (pathfinding en anglais) trouve énormément d'applications dans l'industrie. Un premier exemple d'application qui nous vient à l'esprit est évidemment les utilisations faites dans les GPS pour le calcul d'itinéraires, avec une valuation donnée en fonction de la distance d'un axe, mais également en fonction de l'importance de l'axe, voire même en fonction du trafic et de l'encombrement. D'autres utilisations moins connues sont par exemple les algorithmes associés au routage des données dans un réseau (application très sensible et nécessitant des algorithmes les plus performants possible, afin d'optimiser les temps de réponse entre les routeurs) ou à de l'optimisation de process.\\
+
+Le travail fait ici s'appuie sur les graphes orientés valués, qui sont une forme de graphe la plus générique, et les algorithmes implémentés peuvent très facilement s'adaptés à des graphes non-orientés.\\
+
+Nous avons pris le parti dans ce projet de ne traiter que des algorithmes trouvant exactement le chemin le plus court et pas un chemin optimisé. Nous avons décidé de ne pas utiliser des algorithmes approchés tels que A* car nous les avons déjà traité en première année dans le cadre du cours de java. Nous avons donc étudié trois algorithmes : L'algorithme de Bellman-Ford, l'algorithme de Dijkstra et l'algorithme de Dantzig.\\
+
+Ce rapport se divise en trois parties principales, présentant d'abord les graphes ainsi que les structures de données que nous avons utilisées, puis les algorithmes que nous avons implémentés. Enfin l'application que nous avons réalisée sera présentée.
 
 \section{Définitions et structures de données}
-\section{Présentation des trois algorithmes}
-\section{Application réalisée}
-\subsection{Tests}
+\subsection{Graphe}
+\begin{figure}
 \begin{psmatrix}[mnode=circle]
          &   &   & C & E            \\
 $\alpha$ & A & B & D &   & $\omega$ \\
@@ -85,14 +122,82 @@ $\alpha$ & A & B & D &   & $\omega$ \\
        labelsep=1mm,
        shortput=nab}
 
-\ncline[linewidth=2pt]{2,1}{2,2}^{0} 
-\ncline[linewidth=2pt]{2,2}{2,3}^{2} 
-\ncline[linewidth=2pt]{2,3}{1,4}^{4} 
+\ncline{2,1}{2,2}^{0} 
+\ncline{2,2}{2,3}^{2} 
+\ncline{2,3}{1,4}^{4} 
 \ncline{2,3}{2,4}^{4} 
 \ncline{2,3}{3,4}^{4}
-\ncline[linewidth=2pt]{1,4}{1,5}^{3}
+\ncline{1,4}{1,5}^{3}
 \ncline{2,4}{1,5}^{2}
+\ncline{1,5}{2,4}^{2}
 \ncline{3,4}{2,6}^{4}
-\ncline[linewidth=2pt]{1,5}{2,6}^{10}
+\ncline{1,5}{2,6}^{10}
+
+\caption{Exemple de graphe valué orienté}
+\end{figure}
+Un graphe simple est un couple formé de deux ensembles: \\
+$$G=(X,A)$$ avec X l'ensemble des sommets, et A l'ensemble des arêtes.\\
+$$G=(X,A,v)$$ si on ajoute la possibilité de donner une valeur différentes aux arêtes, nous avons dans ce cas un graphe valué et v est l'ensemble des valuations.\\
+Un graphe peut être non orienté, auquel cas une arête entre un sommet A et B permet aussi bien de se rendre de A en B et de en A. Il peut être aussi orienté, dans ce cas une arête ne peut être parcourue que dans un sens.
+
+\subsection{Matrice d'adjacence}
+
+\begin{figure}[htdp]
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline
+0 & 4 & $\infty$\\
+\hline
+8 & 0 & 3 \\
+\hline
+42 & $\infty$ & 0 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{matrice d'adjacence}
+\end{figure}%
+
+\subsection{Matrice de prédécesseur}
+
+La matrice de prédécesseurs est l'une des deux structures de données utilisées en tant que structure de données de sortie. Elle est utilisée dans les algorithmes de Bellman-Ford et de Dijkstra, ainsi que dans une certaine mesure dans celui de Dantzig, comme nous le verrons par la suite.\\
+
+Une matrice de prédécesseur est définie pour un noeud de départ donné. Cette matrice, telle que nous l'avons implémentée dans notre programme est de dimension "nombre de noeuds" * 2, et stocke pour un noeud de départ donné ses prédécesseurs et les distances associées. La première colonne contient les poids des arcs qui relient le noeud de départ à la deuxième colonne, qui contient les prédécesseurs. On donne un poids nul à l'arc reliant le noeud de départ  à lui-même, et on indique $\infty$ comme prédecesseur.\\
+
+La figure 3 donne la matrice de prédécesseur du noeud 0 du graphe décrit par la matrice d'adjacence donnée en exemple à la figure 2.\\
+
+\begin{figure}[htdp]
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+0 &$\infty$\\
+\hline
+4 & 1 \\
+\hline
+$\infty$ & $\infty$ \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice de prédécesseur pour le noeud 0 de la figure 2}
+\end{figure}%
+
+\subsection{"Matrice de Dantzig"}
+
+Cette matrice, qui est comme son nom l'indique utilisée dans l'algorithme de Dantzig pour collecter les résultats, est une matrice "nombre de noeuds" * "nombre de noeuds" * 2. Dantzig, comme nous le verrons par la suite travaille sur le graphe entier, faisant  le calcul sur tous les sommets.\\
+
+Dès lors, tel que nous avons implémenté la matrice, il s'agit simplement d'un tableau de n matrices de prédécesseurs, où n est le nombre de noeuds dans le graphe.\\
+
+\subsection{choix des types de données}
+%parler du choix d'un int pour les noeuds et valuation
+
+\section{Présentation des trois algorithmes}
+\section{Application réalisée}
+\subsection{Tests}
+\subsection{Découpage du code}
+
+\begin{itemize}
+\item{core}
+\item{io}
+\item{contrôleur}
+\end{itemize}
 
 \end{document}

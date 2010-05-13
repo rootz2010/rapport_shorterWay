@@ -1,0 +1,14 @@
+# ignore all
+*
+
+# except :
+!*.tex
+!.gitignore
+
+# pictures
+!include
+!include/*
+!*.jpg
+!*.png
+!*.jpeg
+!*.gif
