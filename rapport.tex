@@ -14,8 +14,6 @@
 \usetikzlibrary{shapes}
 \usepackage{color}
 \usepackage{url}
-\definecolor{vert}{rgb}{0.2,0.6,0.4} 
-\definecolor{grey}{rgb}{0.95,0.95,0.95}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
 \usepackage{geometry}
@@ -63,6 +61,8 @@ urlcolor=blue
 \geometry{bottom=3cm} % bottom margin
 
 \begin{document}
+
+% page de garde
 \begin{titlepage}
 
 \vspace*{\fill} % pour remplir le haut de la page
@@ -195,7 +195,7 @@ La matrice de prédécesseurs est l'une des deux structures de données utilisé
 
 Une matrice de prédécesseur est définie pour un noeud de départ donné. Cette matrice, telle que nous l'avons implémentée dans notre programme est de dimension ``nombre de noeuds" * 2, et stocke pour un noeud de départ donné ses prédécesseurs et les distances associées. La première colonne contient les poids des arcs qui relient le noeud de départ à la deuxième colonne, qui contient les prédécesseurs. On donne un poids nul à l'arc reliant le noeud de départ  à lui-même, et on indique $\infty$ comme prédecesseur.\\
 
-La figure 3 donne la matrice de prédécesseur du noeud 0 du graphe décrit par la matrice d'adjacence donnée en exemple à la figure 2.\\
+La figure 3 donne la matrice de prédécesseur du noeud 0 du graphe décrit par la matrice d'adjacence donnée en exemple à la figure 2.\\ % attention au numéro !
 
 \begin{figure}[htdp]
 \begin{center}
@@ -223,7 +223,7 @@ Cette matrice, qui est comme son nom l'indique utilisée dans l'algorithme de Da
 
 Dès lors, tel que nous avons implémenté la matrice, il s'agit simplement d'un tableau de n matrices de prédécesseurs, où n est le nombre de noeuds dans le graphe.\\
 
-La figure 4 présente un exemple de cette matrice pour la matrice d'adjacence donnée à la figure 2. La matrice n'est ici pas le résultat d'un calcul de l'algorithme, et des chemins possibles n'y figurent pas, tandis que des chemins plus courts ne sont pas notés.\\
+La figure 4 présente un exemple de cette matrice pour la matrice d'adjacence donnée à la figure 2. La matrice n'est ici pas le résultat d'un calcul de l'algorithme, et des chemins possibles n'y figurent pas, tandis que des chemins plus courts ne sont pas notés.\\ % attention au numéro !
 
 \begin{figure}[htdp]
 \begin{center}
@@ -256,9 +256,71 @@ Dans l'implémentation des algorithmes nous avons surtout utilisé des matrices,
 
 Nous avons donc implémenté les trois algorithmes principaux de recherche de chemins, qui sont ceux de Bellman-Ford, de Dijkstra et de Dantzig. Chacun a ses propres particularités, en particulier en terme de champ d'application.\\
 
+Dans la suite de cette partie, nous allons étudier les différents algorithmes sur un même exemple, dont la matrice d'adjacence et la représentation sont données aux figures 5 et 6.\\ % attention au numéro !
+
+\begin{figure}[htpd]
+ \centering
+ \begin{psmatrix}[mnode=circle]
+	    & 2\\
+	 1 &    & 4\\
+	    & 3\\
+\end{psmatrix}
+	
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline{2,1}{1,2}^{6}
+	\ncline{2,1}{3,2}^{1}
+	\ncline{1,2}{2,3}^{1}
+	\ncline{3,2}{1,2}^{1}
+	\ncline{3,2}{2,3}^{4}
+
+  \caption{Le graphe qui est utilisé dans les sections suivantes}\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+0 & 6 & 1 & $\infty$\\
+\hline
+$\infty$ & 0 & $\infty$ & 1\\
+\hline
+$\infty$ & 1 & 0 & 4\\
+\hline
+$\infty$ & $\infty$ & $\infty$ & 0\\
+\hline
+\end{tabular}
+\end{center}
+\caption{La matrice d'adjacence associée au graphe de la figure précédente}
+\end{figure}
+
 \subsection{Bellman-Ford}
 \subsection{Dijkstra}
 \subsection{Dantzig}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{psmatrix}[mnode=circle]
+{\color{red} \bf 1}\\
+\end{psmatrix}
+\end{center}
+\caption{k = 0}
+\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+(0, 1) & ($\infty$, 0) & ($\infty$, 0) & ($\infty$, 0) \\
+\hline
+($\infty$, 0) & (0, 2) & ($\infty$, 0) & ($\infty$, 0) \\
+\hline
+($\infty$, 0) & ($\infty$, 0) & (0, 3) & ($\infty$, 0)\\
+\hline
+($\infty$, 0) & ($\infty$, 0) & ($\infty$, 0) & (0, 4) \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice pour k = 0}
+\end{figure}
 
 \newpage
 \section{Application réalisée}
