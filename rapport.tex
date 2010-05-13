@@ -549,16 +549,56 @@ La structure de donnée utilisée ici est la liste chaînée, qui convient parti
 \subsection{Tests}
 \subsection{Découpage du code}
 
+Nous avons découpé notre code en trois grandes parties, dans des fichiers différents regroupant les catégories communes :
+
 \begin{itemize}
-\item{core}
-\item{io}
-\item{contrôleur}
+\item{core} : en C, contenant le coeur de notre application
+\item{io} : en C également, contenant les fonctions d'importation et d'exportation.
+\item{contrôleur} : en Objective-C, qui permet d'interagir graphiquement avec le programme
 \end{itemize}
 
-% utilisation des fichiers d'en-tête
+Les fichiers d'en-tête ont bien évidemment été très utilisés, à la fois pour permettre cette compilation séparée, et pour définir les structures de données utilisées dans les fonctions.\\
 
 \subsubsection{Fichier core.c}
 
-% génération des matrices
+Nous allons détailler un peu plus le fichier fondamental de notre application. Il contient tout d'abord des fonctions d'utilitaires pour l'application :
+\begin{lstlisting}
+/* Function to generate a random graph, this graph has a matrix form
+ * if you want to have a chained list form use the convert_matrix function
+ */
+int ** random_graph(int nb_nodes, float completeness, float negative_probability);
+/* function to convert a matrix into a chained list */
+struct chained_list ** convert_matrix(int ** tab, int nb_nodes);
+/*function to free a list*/
+void free_list(struct chained_list * list);
+/*function to free a table of chained list*/
+void free_table_list(struct chained_list ** list, int nb_nodes);
+/*function to free a 2 dimensions matrix*/
+void free_2Dmatrix(int ** matrix, int row);
+/* function to free a 3 dimensions matrix */
+void free_3Dmatrix(int *** matrix, int row, int col);
+\end{lstlisting}
+
+La première fonction sert à générer des graphes aléatoires, qui vont servir à tester nos algorithmes. Les graphes sont générés par leur matrice d'adjacence. Un certain nombre de tirages est effectué dans la fonction, afin de respecter les différentes probabilités fixées en entrée, celles de remplissage de la matrice et celles de probabilité de présence de valuations négatives.\\
+
+La fonction sert en effet à générer des graphes à valuation négative ou non, selon leur probabilité de présence. Les valuations sont comprises entre 0 et MAX\_LEN pour le cas des graphes à valuations positives, et entre - MAX\_LEN/2 + 1 et MAX\_LEN/2 pour les valuations négatives. L'intervalle est réduit pour des raisons de formatage de la sortie, qui est formatée pour des affichages de deux caractères.\\
+
+\subsubsection{Fichier io.c}
+
+Dans ce fichier sont contenues toutes les fonctions d'importation et d'exportation de graphes. Le format d'un fichier de stockage est le suivant :
+\begin{lstlisting}
+nb_nodes : nb
+node node --
+-- node  node
+-- -- --
+\end{lstlisting}
+
+Les ``--" correspondent à l'absence d'arc entre les deux sommets.
+
+\subsubsection{Le contrôleur}
+
+Le contrôleur permet l'interaction de l'application avec l'utilisateur. À travers l'affichage l'utilisateur peut choisir la taille du graphe, ainsi que les différents paramètres associés au graphe. Il peut ensuite choisir les différentes options de résolution des trois algorithmes, comme le chemin à trouver.\\
+
+Les fonctions d'importation et d'exportation des graphes sont également gérées par son intermédiaire, tout comme les tests, qui renvoient un fichier csv de résultats. Il est possible de choisir dans les tests l'algorithme à utiliser, ainsi que l'amplitude du test. \\
 
 \end{document}
