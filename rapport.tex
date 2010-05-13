@@ -27,7 +27,9 @@
 
 % for the code
 \usepackage{listings}
-\lstset{language=[ANSI]C}
+\definecolor{vert}{rgb}{0.2,0.6,0.4} 
+\definecolor{grey}{rgb}{0.95,0.95,0.95}
+\lstset{language=c,frame=single, breaklines=true, basicstyle=\ttfamily,backgroundcolor=\color{grey},basicstyle=\scriptsize, keywordstyle=\color{blue}, commentstyle=\color{vert}, stringstyle=\color{red}, identifierstyle=\ttfamily,showstringspaces=false}
 
 \def\subsubsubsection{\paragraph}
 \def\subsubsubsubsection{\subparagraph}
@@ -142,8 +144,8 @@ $\alpha$ & A & B & D &   & $\omega$ \\
 \ncline{2,3}{2,4}^{4} 
 \ncline{2,3}{3,4}^{4}
 \ncline{1,4}{1,5}^{3}
-\ncline{2,4}{1,5}^{2}
-\ncline{1,5}{2,4}^{2}
+\ncarc[arcangle=10]{2,4}{1,5}^{2}
+\ncarc[arcangle=10]{1,5}{2,4}^{2}
 \ncline{3,4}{2,6}^{4}
 \ncline{1,5}{2,6}^{10}
 
@@ -273,7 +275,8 @@ Dans la suite de cette partie, nous allons étudier les différents algorithmes 
 	\ncline{3,2}{1,2}^{1}
 	\ncline{3,2}{2,3}^{1}
 
-  \caption{Le graphe qui est utilisé dans les sections suivantes}\end{figure}
+  \caption{Le graphe qui est utilisé dans les sections suivantes}
+\end{figure}
 
 \begin{figure}[htpd]
 \begin{center}
@@ -294,6 +297,24 @@ $\infty$ & $\infty$ & $\infty$ & 0\\
 
 %%%%%%%%%%%%Fin de l'intro de la partie 3%%%%%%%%%%%
 \subsection{Bellman-Ford}
+Bellman-Ford permet de trouver la matrice de prédécesseur pour un point de départ donné.\\
+Bellman Ford fonctionne en regardant pour chaque sommet du graphe les prédécesseurs et en comparant les poids affectés à chaque sommet. Voici le pseudo code de l'algorithme de Bellman-Ford.
+\begin{lstlisting}
+ bool Bellman_Ford( G, s) 
+ 
+   initialisation ( G, s)  // les poids de tous les sommets sont mis a +infini 
+                           // le poids du sommet initial a 0
+   pour i=1 a Nombre de sommets -1 faire
+        pour chaque arc (u, v) du graphe faire
+           paux := poids(u) + poids(arc(u, v)); 
+           si paux < poids(v) alors
+               pred(v) := u; 
+               poids(v) := paux; 
+   pour chaque arc (u, v) du graphe faire
+       si poids(u) + poids(arc(u, v)) <poids(v) alors
+         retourner faux 
+   retourner vrai
+\end{lstlisting}
 %%%%%%%%%%%%%Fin de bellman%%%%%%%%%%%%%%%
 \subsection{Dijkstra}
 %%%%%%%%%%%%%%Fin de dijkstra%%%%%%%%%%%%%%%
@@ -376,7 +397,8 @@ $\infty$ & $\infty$ & $\infty$ & 0\\
 	\ncline{3,2}{1,2}^{1}
 	\ncline{3,2}{2,3}^{1}
 
-  \caption{k = 2}\end{figure}
+  \caption{k = 2}
+\end{figure}
 
 \begin{figure}[htpd]
 \begin{center}
@@ -410,7 +432,8 @@ $\infty$ & $\infty$ & $\infty$ & 0\\
 	\ncline{1,2}{2,3}^{1}
 	\ncline{3,2}{2,3}^{1}
 
-  \caption{Phase d'optimisation}\end{figure}
+  \caption{Phase d'optimisation}
+\end{figure}
 
 \begin{figure}[htpd]
 \begin{center}
