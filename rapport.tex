@@ -29,7 +29,7 @@
 \usepackage{listings}
 \definecolor{vert}{rgb}{0.2,0.6,0.4} 
 \definecolor{grey}{rgb}{0.95,0.95,0.95}
-\lstset{language=c,frame=single, breaklines=true, basicstyle=\ttfamily,backgroundcolor=\color{grey},basicstyle=\scriptsize, keywordstyle=\color{blue}, commentstyle=\color{vert}, stringstyle=\color{red}, identifierstyle=\ttfamily,showstringspaces=false}
+\lstset{language=c,frame=single, breaklines=true, basicstyle=\ttfamily,backgroundcolor=\color{grey},basicstyle=\scriptsize, keywordstyle=\color{blue}, commentstyle=\color{vert}, stringstyle=\color{red}, identifierstyle=\ttfamily,showstringspaces=false, extendedchars=true}
 
 \def\subsubsubsection{\paragraph}
 \def\subsubsubsubsection{\subparagraph}
@@ -167,7 +167,7 @@ plop
 \end{tabular}
 \end{center}
 \caption{matrice d'adjacence}
-\end{figure}%
+\end{figure}
 
 Dans notre programme nous avons utilisé un tableau d'entiers, qui sont alloués dynamiquement puisque la taille du graphe est déterminée pendant l'exécution par l'utilisateur :
 \begin{lstlisting}
@@ -320,6 +320,44 @@ Bellman Ford fonctionne en regardant pour chaque sommet du graphe les prédéces
 %%%%%%%%%%%%%%Fin de dijkstra%%%%%%%%%%%%%%%
 \subsection{Dantzig}
 
+Dantzig est un algorithme qui étudie tout le graphe, contrairement aux deux algorithmes précédents, et peut travailler comme Bellman-Ford sur des graphes à valuation négative. Il permet également de détecter les circuits.\\
+
+Le principe général de l'algorithme est de travailler sur des sous-graphes jusqu'à parvenir au graphe principal. L'algorithme peut se diviser en trois parties, comme le montre le pseudo-code ci-dessous :
+\begin{lstlisting}
+initialisation(); /* construction de la matrice de sortie */
+
+degre_graphe = 0; /* le niveau du graphe par rapport au graphe total */
+circuit  = faux;
+
+tant que degre_graphe <= taille_graphe - 1 et non circuit faire
+|  i = 1;
+|  tant que i <= degre_graphe et non circuit faire
+|    |  pour j = 1 a k faire
+|    |    longueur  = d(i,j) + v(j, k + 1); /* d est la distance deja calculee, v la valuation */
+|    |      si longueur < d(i, k+1) alors
+|    |        d(i, k+1) = longueur;
+|    |         p(i, k+1) = j; /* p est le predecesseur de k+1 en partant de i */
+|    |    longueur  = d(i,j) + v(j, k + 1)
+|    |    si longueur < d(k+1, i) alors
+|    |      d(k+1, i) = longueur;
+|    |    si i = j alors
+|    |      p(k+1, i) = k + 1;
+|    |    sinon
+|    |      p(k+1, j) = p(j,i);
+|    |  si d(k+1, i) + d(i, k+1) < 0 alors
+|    |    circuit = vrai;
+|    |  i = i + 1;
+|  si non circuit alors
+|   |  pour i = 1 a k faire
+|   |    pour j = 1 a k faire
+|   |      longueur = d(i, k+1) + d(k+1, j);
+|   |      si longueur < d(i,j) alors
+|   |        d(i, j) = longueur;
+|   |        p(i, j) = p(k+1, j);
+\end{lstlisting}
+
+La première partie est une initialisation de la matrice de sortie, comme montré à la figure 7. Il s'agit de donner un coup infini avec aucun prédécesseur à tous les noeuds, sauf la diagonale, où on met un coup nul avec comme prédécesseur le même noeud.\\% attention au numéro !
+
 % k = 0
 \begin{figure}[htpd]
 \begin{center}
@@ -327,28 +365,28 @@ Bellman Ford fonctionne en regardant pour chaque sommet du graphe les prédéces
 {\color{red} \bf 1}\\
 \end{psmatrix}
 \end{center}
-\caption{k = 0}
+\caption{initialisation}
 \end{figure}
 
 \begin{figure}[htpd]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-(0, 1) & ($\infty$, 0) & ($\infty$, 0) & ($\infty$, 0) \\
+(0, 1) & ($\infty$, $\infty$) & ($\infty$, $\infty$) & ($\infty$, $\infty$) \\
 \hline
-($\infty$, 0) & (0, 2) & ($\infty$, 0) & ($\infty$, 0) \\
+($\infty$, $\infty$) & (0, 2) & ($\infty$, $\infty$) & ($\infty$, $\infty$) \\
 \hline
-($\infty$, 0) & ($\infty$, 0) & (0, 3) & ($\infty$, 0)\\
+($\infty$, $\infty$) & ($\infty$, $\infty$) & (0, 3) & ($\infty$, $\infty$)\\
 \hline
-($\infty$, 0) & ($\infty$, 0) & ($\infty$, 0) & (0, 4) \\
+($\infty$, $\infty$) & ($\infty$, $\infty$) & ($\infty$, $\infty$) & (0, 4) \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Matrice pour k = 0}
+\caption{initialisation}
 \end{figure}
 
 % k = 1
-\begin{figure}[htpd]
+\begin{figure}[h!]
 \begin{center}
 \begin{psmatrix}[mnode=circle]
  & {\color{red} \bf 2}\\
@@ -364,22 +402,24 @@ Bellman Ford fonctionne en regardant pour chaque sommet du graphe les prédéces
 \caption{k = 1}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[h!]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-(0, 1) & {\color{red} \bf (6, 2)} & {\color{red} \bf (1, 1)} & ($\infty$, 0) \\
+(0, 1) & {\color{red} \bf (6, 1)} & {\color{red} \bf (1, 1)} & ($\infty$, $\infty$) \\
 \hline
-($\infty$, 0) & (0, 2) & ($\infty$, 0) & ($\infty$, 0) \\
+($\infty$, $\infty$) & (0, 2) & ($\infty$, $\infty$) & ($\infty$, $\infty$) \\
 \hline
-($\infty$, 0) & ($\infty$, 0) & (0, 3) & ($\infty$, 0)\\
+($\infty$, $\infty$) & ($\infty$, $\infty$) & (0, 3) & ($\infty$, $\infty$)\\
 \hline
-($\infty$, 0) & ($\infty$, 0) & ($\infty$, 0) & (0, 4) \\
+($\infty$, $\infty$) & ($\infty$, $\infty$) & ($\infty$, $\infty$) & (0, 4) \\
 \hline
 \end{tabular}
 \end{center}
 \caption{Matrice pour k = 1}
 \end{figure}
+
+Une fois la matrice remplie avec les valeurs de départ, on incrémente la taille du graphe jusqu'à obtenir le graphe total. Le principe est de chercher un noeud appartenant au graphe déjà calculé, qui minimise la distance déjà obtenue entre le noeud de départ est le noeud que l'on veut ajouter au graphe. Il s'agit donc de trouver un noeud intermédiaire entre i (noeud de départ) et  k+1 (noeud d'arrivée) qui minimise la distance entre ces deux extrémités.\\
 
 % k = 2
 \begin{figure}[htpd]
@@ -400,25 +440,29 @@ Bellman Ford fonctionne en regardant pour chaque sommet du graphe les prédéces
   \caption{k = 2}
 \end{figure}
 
+Lorsque l'on trouve un tel noeud, on va modifier la matrice de sortie, en notant dans la première colonne de la matrice de prédécesseur la nouvelle distance, et dans la deuxième colonne le noeud par lequel il faut passer.\\
+
 \begin{figure}[htpd]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
-(0, 1) & (6, 2) & (1, 1) & ($\infty$, 0) \\
+(0, 1) & (6, 1) & (1, 1) & ($\infty$, $\infty$) \\
 \hline
-($\infty$, 0) & (0, 2) & ($\infty$, 0) & {\color{red} \bf (1, 2)} \\
+($\infty$, $\infty$) & (0, 2) & ($\infty$, $\infty$) & {\color{red} \bf (1, 2)} \\
 \hline
-($\infty$, 0) & {\color{red} \bf (1, 2)} & (0, 3) & {\color{red} \bf (1, 3)}\\
+($\infty$, $\infty$) & {\color{red} \bf (1, 2)} & (0, 3) & {\color{red} \bf (1, 3)}\\
 \hline
-($\infty$, 0) & ($\infty$, 0) & ($\infty$, 0) & (0, 4) \\
+($\infty$, $\infty$) & ($\infty$, $\infty$) & ($\infty$, $\infty$) & (0, 4) \\
 \hline
 \end{tabular}
 \end{center}
 \caption{Matrice pour k = 2}
 \end{figure}
 
+À chaque fois que le graphe est agrandi, on va revérifier la matrice avec les nouveaux noeuds que l'on a rajouté, pour voir si un chemin plus court ne serait pas obtenu en passant par ces nouveaux noeuds pour atteindre des noeuds qui appartiennent au graphe de niveau inférieur.\\
+
 % optimisation
-\begin{figure}[htpd]
+\begin{figure}[h!]
  \centering
  \begin{psmatrix}[mnode=circle]
 	    & {\color{red} \bf 2}\\
@@ -435,22 +479,70 @@ Bellman Ford fonctionne en regardant pour chaque sommet du graphe les prédéces
   \caption{Phase d'optimisation}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[h!]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
 (0, 1) & {\color{red} \bf (1, 4)} & (1, 3) & {\color{red} \bf (1, 3)} \\
 \hline
-($\infty$, 0) & (0, 2) & ($\infty$, 0) & (1, 2) \\
+($\infty$, $\infty$) & (0, 2) & ($\infty$, $\infty$) & (1, 2) \\
 \hline
-($\infty$, 0) & (1, 2) & (0, 3) & (1, 3)\\
+($\infty$, $\infty$) & (1, 2) & (0, 3) & (1, 3)\\
 \hline
-($\infty$, 0) & ($\infty$, 0) & ($\infty$, 0) & (0, 4) \\
+($\infty$, $\infty$) & ($\infty$, $\infty$) & ($\infty$, $\infty$) & (0, 4) \\
 \hline
 \end{tabular}
 \end{center}
 \caption{Matrice après optimisation}
 \end{figure}
+
+En terme de complexité en temps, on se retrouve avec cet algorithme en $o(n^{3})$. En effet on boucle n fois pour l'agrandissement du graphe, et à l'intérieur de cette boucle on se retrouve avec deux boucles imbriquées.\\
+
+Pour la complexité en espace, on a une complexité en $o(n^{2})$, puisqu'on retourne une matrice à trois dimensions, dont deux dépendent de la taille du graphe.\\
+
+Ces complexités sont à relativiser, dans la mesure où Dantzig travaille sur un graphe entier, alors que les deux algorithmes précédents travaillaient à partir d'un noeud de départ.\\
+
+\subsection{Recherche du plus court chemin}
+
+Les trois algorithmes précédents ne rendent pas directement le plus court chemin, mais les sommets le réalisant. Il y a donc un travail de reconstruction que nous avons fait à l'issue du calcul afin d'afficher le plus court chemin.\\
+
+\begin{lstlisting}
+struct chained_list* find_short(int** matrix, int departure, int arrival) {
+	int node;
+	struct chained_list * current;
+	struct chained_list * former_current;
+	
+	/* one pointer on which we work, one pointer which is a backup of the previous current pointer :
+	 * we build the chained_list like this : next <= (current->next) */
+	
+	node = arrival;
+	
+	do {
+		current = (struct chained_list *) malloc(sizeof(struct chained_list));
+		current -> number = node;
+		current -> value = matrix[node][0];
+		
+		/* test to avoid trying to access to next which doesn't contain anything 
+		 * during the first step. during this first step the tail must point to nothing*/
+		if (node != arrival) {
+			current -> next = former_current;
+		}
+		else {
+			current -> next = NULL; /* nothing is also NULL :D */
+		}
+		node = matrix[node][1];
+		//We end the loop sooner if there is no way to find a path
+		if (node==INT_MAX) return NULL;
+		former_current = current;
+	} while (node != departure);
+	
+	return current;
+}
+\end{lstlisting}
+
+Le principe de la fonction est de partir du noeud d'arrivée, et de remonter la matrice de prédécesseur jusqu'à arriver au noeud de départ. \\
+
+La structure de donnée utilisée ici est la liste chaînée, qui convient particulièrement à la tâche dans la mesure où la structure est construite à l'envers du sens de lecture, sans connaître à l'avance la longueur nécessaire.\\
 
 \newpage
 \section{Application réalisée}
