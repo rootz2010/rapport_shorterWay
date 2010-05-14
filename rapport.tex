@@ -297,26 +297,408 @@ $\infty$ & $\infty$ & $\infty$ & 0\\
 
 %%%%%%%%%%%%Fin de l'intro de la partie 3%%%%%%%%%%%
 \subsection{Bellman-Ford}
-Bellman-Ford permet de trouver la matrice de prédécesseur pour un point de départ donné.\\
+Bellman-Ford permet de trouver la matrice de prédécesseur pour un point de départ donné et permet de trouver un plus court chemin dans un graphe circuit contenant des valuations positives et/ou negatives.\\
 Bellman Ford fonctionne en regardant pour chaque sommet du graphe les prédécesseurs et en comparant les poids affectés à chaque sommet. Voici le pseudo code de l'algorithme de Bellman-Ford.
 \begin{lstlisting}
  bool Bellman_Ford( G, s) 
  
    initialisation ( G, s)  // les poids de tous les sommets sont mis a +infini 
                            // le poids du sommet initial a 0
-   pour i=1 a Nombre de sommets -1 faire
-        pour chaque arc (u, v) du graphe faire
-           paux := poids(u) + poids(arc(u, v)); 
-           si paux < poids(v) alors
-               pred(v) := u; 
-               poids(v) := paux; 
-   pour chaque arc (u, v) du graphe faire
-       si poids(u) + poids(arc(u, v)) <poids(v) alors
-         retourner faux 
-   retourner vrai
+   compteur = 0
+   tant que des modifications sont faites
+   	pour i=1 a Nombre de sommets -1 faire
+        		pour chaque predecesseur j de i faire
+           		paux := poids(j) + poids(arc(i, j)); 
+           		si paux < poids(i) alors
+               			pred(i) := j; 
+               			poids(i) := paux; 
+         si compteur > Nombre de sommets et si il y a eu des modifications
+   		retourner `Le graphe contient des circuits`
 \end{lstlisting}
+
+Voici le déroulement de l'algorithme de Bellman-Ford sur un graphe d'exemple.
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{psmatrix}[mnode=circle]
+ & 2\\
+ 1\\
+ & 3\\
+\end{psmatrix}
+
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline{2,1}{1,2}^{6}
+	\ncline{2,1}{3,2}^{1}
+	\ncline{3,2}{1,2}^{3}
+
+\end{center}
+\caption{Etat initial}
+\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+1 & 0 & - \\
+\hline
+2 & $\infty$ & - \\
+\hline
+3 & $\infty$ & - \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice de predecesseur pour l'etat initial}
+\end{figure}
+%Etape 1
+On va visiter le sommet 2 ensuite et on regarde son premier prédecesseur 1.
+\begin{figure}[htpd]
+\begin{center}
+\begin{psmatrix}[mnode=circle]
+ & {\color{red} \bf 2}\\
+ 1\\
+ & 3\\
+\end{psmatrix}
+
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline[linewidth=2pt]{2,1}{1,2}^{6}
+	\ncline{2,1}{3,2}^{1}
+	\ncline{3,2}{1,2}^{3}
+
+\end{center}
+\caption{Etape 1}
+\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+1 & 0 & - \\
+\hline
+{\color{red} \bf 2} & 6 & 1 \\
+\hline
+3 & $\infty$ & - \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice de predecesseur pour l'Etape 1}
+\end{figure}
+%Etape 2
+On regarde le deuxième prédecesseur de 2 qui est 3, rien ne change.
+\begin{figure}[htpd]
+\begin{center}
+\begin{psmatrix}[mnode=circle]
+ & {\color{red} \bf 2}\\
+ 1\\
+ & 3\\
+\end{psmatrix}
+
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline{2,1}{1,2}^{6}
+	\ncline{2,1}{3,2}^{1}
+	\ncline[linewidth=2pt]{3,2}{1,2}^{3}
+
+\end{center}
+\caption{Etape 2}
+\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+1 & 0 & - \\
+\hline
+{\color{red} \bf 2} & 6 & 1 \\
+\hline
+3 & $\infty$ & - \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice de predecesseur pour l'Etape 2}
+\end{figure}
+%Etape 3
+On regarde le sommet 3 et son unique prédecesseur 1.
+\begin{figure}[htpd]
+\begin{center}
+\begin{psmatrix}[mnode=circle]
+ & 2\\
+ 1\\
+ & {\color{red} \bf 3}\\
+\end{psmatrix}
+
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline{2,1}{1,2}^{6}
+	\ncline[linewidth=2pt]{2,1}{3,2}^{1}
+	\ncline{3,2}{1,2}^{3}
+
+\end{center}
+\caption{Etape 3}
+\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+1 & 0 & - \\
+\hline
+2 & 6 & 1 \\
+\hline
+{\color{red} \bf 3} & $ 1 $ & 1 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice de predecesseur pour l'Etape 3}
+\end{figure}
+%Etape 4
+Tous les sommets ont été visités et des modifications ont été faites on recommence donc avec le sommet 2. Si l'on regarde le premier prédecesseur 1 la situation ne change pas ce qui n'est pas le cas si l'on regarde le deuxième prédecesseur de 2 c'est à dire 3.
+\begin{figure}[htpd]
+\begin{center}
+\begin{psmatrix}[mnode=circle]
+ & {\color{red} \bf 2}\\
+ 1\\
+ & 3\\
+\end{psmatrix}
+
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline[linewidth=2pt]{2,1}{1,2}^{6}
+	\ncline{2,1}{3,2}^{1}
+	\ncline{3,2}{1,2}^{3}
+
+\end{center}
+\caption{Etape 4}
+\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+1 & 0 & - \\
+\hline
+{\color{red} \bf 2} & 4 & 3 \\
+\hline
+3 & $ 1 $ & 1 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice de prédecesseur pour l'Etape 4}
+\end{figure}
+Si l'on continue de dérouler l'algorithme plus aucune modification ne sera effectuée, nous avons donc trouvé un plus court chemin.
+
+Pour un graphe sans circuit la boucle tant que ne peut pas être parcourue plus de n fois, cette condition nous permet donc de détecter des circuits.
+
+La complexité de cet algorithme est en $o(n^{3})$ dans le pire des cas (graphe complet et boucle tant que parcourue n fois).
 %%%%%%%%%%%%%Fin de bellman%%%%%%%%%%%%%%%
 \subsection{Dijkstra}
+Dijkstra permet de trouver la matrice de prédécesseur pour un point de départ donné (identique à Bellman-Ford) et permet de trouver un plus court chemin dans un graphe contenant seulement des valuations positives.\\
+Cette fois-ci Dijkstra regarde les successeurs de chaque sommet, le postulat de base de Dijkstra est que pour trouver un plus court chemin il faut passer par le sommet le plus proche de celui où l'on se trouve. Ce qui n'est pas toujours le cas pour un graphe contenant des valuations négatives, par exemple :
+\begin{figure}[htpd]
+\begin{center}
+\begin{psmatrix}[mnode=circle]
+ & 2\\
+ 1\\
+ & 3\\
+\end{psmatrix}
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline{2,1}{1,2}^{6}
+	\ncline{2,1}{3,2}^{8}
+	\ncline{3,2}{1,2}^{-5}
+
+\end{center}
+\caption{Graphe avec des valuations négatives}
+\end{figure}
+
+Voici le pseudo-code de l'algorithme de Dijkstra.
+\begin{lstlisting}
+fonction Dijkstra (noeuds, fils, distance, debut, fin)
+     Pour n parcourant noeuds
+         n.parcouru = infini   // Peut etre implemente avec -1
+         n.precedent = 0
+     Fin pour
+     debut.parcouru = 0
+     PasEncoreVu = noeuds
+     Tant que PasEncoreVu != liste vide
+         n1 = minimum(PasEncoreVu)   // Le noeud dans PasEncoreVu avec parcouru le plus petit
+         PasEncoreVu.enlever(n1)
+         Pour n2 parcourant fils(n1)   // Les noeuds relies a n1 par un arc
+             Si n2.parcouru > n1.parcouru + distance(n1, n2)   // distance correspond au poids de l'arc reliant n1 et n2
+                 n2.parcouru = n1.parcouru + distance(n1, n2)
+                 n2.precedent = n1   // Dit que pour aller a n2, il faut passer par n1
+             Fin si
+         Fin pour
+     Fin tant que
+     chemin = liste vide
+     n = fin
+     Tant que n != debut
+         chemin.ajouterAvant(n)
+         n = n.precedent
+     Fin tant que
+     chemin.ajouterAvant(debut)
+     Retourner chemin
+ Fin fonction Dijkstra
+\end{lstlisting}
+
+Déroulons l'algorithme de Dijkstra sur un exemple.\\
+On visite le sommet 1 :
+\begin{itemize}
+\item Sommets visités : 1
+\item Sommets atteignables : 2,3
+\end{itemize}
+
+\begin{figure}[htpd]
+ \centering
+ \begin{psmatrix}[mnode=circle]
+	    & 2\\
+	 {\color{red} \bf 1} &    & 4\\
+	    & 3\\
+\end{psmatrix}
+	
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline{2,1}{1,2}^{6}
+	\ncline{2,1}{3,2}^{1}
+	\ncline{1,2}{2,3}^{1}
+	\ncline{3,2}{1,2}^{1}
+	\ncline{3,2}{2,3}^{1}
+
+  \caption{Etat initial}
+\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+ {\color{red} \bf 1} & 0 & - \\
+\hline
+2 & $\infty$ & - \\
+\hline
+3 & $\infty$ & - \\
+\hline
+4 & $\infty$ & - \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice de prédecesseur pour l'Etat initial}
+\end{figure}
+%Etape1
+Le sommet le plus proche est le sommet 3 on va donc le visiter.
+\begin{itemize}
+\item Sommets visités : 1, 3
+\item Sommets atteignables : 2, 4
+\end{itemize}
+\begin{figure}[htpd]
+ \centering
+ \begin{psmatrix}[mnode=circle]
+	    & 2\\
+	1 &    & 4\\
+	    &  {\color{red} \bf 3}\\
+\end{psmatrix}
+	
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline{2,1}{1,2}^{6}
+	\ncline{2,1}{3,2}^{1}
+	\ncline{1,2}{2,3}^{1}
+	\ncline{3,2}{1,2}^{1}
+	\ncline{3,2}{2,3}^{1}
+
+  \caption{Etape 1}
+\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+ 1 & 0 & - \\
+\hline
+2 & 6 & 1 \\
+\hline
+{\color{red} \bf 3} & 1 & 1 \\
+\hline
+4 & $\infty$ & - \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice de prédecesseur pour l'Etape 1}
+\end{figure}
+%Etape 2
+Le sommet le plus proche non visité est alors 2, on le visite.
+\begin{itemize}
+\item Sommets visités : 1, 3, 2
+\item Sommets atteignables : 4
+\end{itemize}
+\begin{figure}[htpd]
+ \centering
+ \begin{psmatrix}[mnode=circle]
+	    & {\color{red} \bf 2}\\
+	1 &    & 4\\
+	    &  3\\
+\end{psmatrix}
+	
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline{2,1}{1,2}^{6}
+	\ncline{2,1}{3,2}^{1}
+	\ncline{1,2}{2,3}^{1}
+	\ncline{3,2}{1,2}^{1}
+	\ncline{3,2}{2,3}^{1}
+
+  \caption{Etape 2}
+\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+ 1 & 0 & - \\
+\hline
+{\color{red} \bf 2} & 2 & 3 \\
+\hline
+3 & 1 & 1 \\
+\hline
+4 & 5 & 3 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice de prédecesseur pour l'Etape 2}
+\end{figure}
+%Etape 3
+Seul le sommet 4 est atteignable et est non visité, on le visite.
+\begin{itemize}
+\item Sommets visités : 1, 3, 2, 4
+\item Sommets atteignables : -
+\end{itemize}
+\begin{figure}[htpd]
+ \centering
+ \begin{psmatrix}[mnode=circle]
+	    & 2\\
+	1 &    & {\color{red} \bf 4}\\
+	    &  3\\
+\end{psmatrix}
+	
+\psset{arrows=->, labelsep=1mm, shortput=nab}
+	\ncline{2,1}{1,2}^{6}
+	\ncline{2,1}{3,2}^{1}
+	\ncline{1,2}{2,3}^{1}
+	\ncline{3,2}{1,2}^{1}
+	\ncline{3,2}{2,3}^{1}
+
+  \caption{Etape 3}
+\end{figure}
+
+\begin{figure}[htpd]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+ 1 & 0 & - \\
+\hline
+{\color{red} \bf 2} & 2 & 3 \\
+\hline
+3 & 1 & 1 \\
+\hline
+4 & 3 & 2 \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Matrice de prédecesseur pour l'Etape 3}
+\end{figure}
+Tous les sommets on été visités, la matrice de prédécesseur est donc définitive.\\
+La complexité de Dijkstra dans le pire des cas est en $o(n^{2})$ car pour chaque sommet on regarde tous ses prédecesseurs. Le pire des cas pour l'algorithme de Dijkstra est donc lorsque le graphe est complet.
 %%%%%%%%%%%%%%Fin de dijkstra%%%%%%%%%%%%%%%
 \subsection{Dantzig}
 
@@ -547,6 +929,28 @@ La structure de donnée utilisée ici est la liste chaînée, qui convient parti
 \newpage
 \section{Application réalisée}
 \subsection{Tests}
+Nous avons executé (par le biais de la fonctionnalité ''stress test'' de notre application), plusieurs fois les calculs de plus court chemin sur des graphes de taille différente. A chaque execution le temps était mesuré et exporté dans un fichier csv, nous avons ainsi obtenu des courbes que nous avons pu comparer aux complexités théoriques.
+\paragraph{Bellman-Ford}
+Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 1000 noeuds.
+%\includegraphics{images/bellman}
+Nous obtenons une courbe qui lorsqu'elle est approximée par une focntion puissnace nous donne quelquechose plus proche de $x^{2}$ que de $x^{3}$. $x^{3}$ étant la complexité dans le pire des cas pour l'algorithme de Bellman-Ford on peut raisonnablement penser que ce pire des cas se présente peu souvent sur des graphes générés aléatoirement.
+\paragraph{Dijkstra}
+Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 1000 noeuds.
+%\includegraphics{images/dijkstra}
+Cette fois-ci la courbe est approximée avec quelquechose proche de $x^{2}$, nous sommes donc en accord avec la complexité théorique.
+\paragraph{Dantzig}
+Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 600 noeuds.
+%\includegraphics{images/dantzig}
+La courbe qui approxime la mesure est proche de $x^{3}$ ce qui est en accord avec la complexité théorique de l'algorithme.
+\paragraph{Comparaison des performances}
+Les équations obtenus nous permettent de classer les algorithmes du plus au moins performant :
+\begin{enumerate}
+\item Dijkstra :  $1,2*10^{-7}*x^{1,73}$
+\item Bellman-Ford :  $9,4*10^{-8}*x^{1,99}$
+\item Dantzig : $3,3*10^{-8}*x^{2,96}$
+\end{enumerate}
+On observe que Dijkstra est plus performant que Bellman-Ford, ce qui est normal du fait que Dijkstra a été con\c cu comme une amélioration de Bellman-Ford.\\
+Dantzig est le moins performant mais il faut relativiser ce résultat car pour obtenir le même résultat que ce que nous permet d'obtenir dantzig pour un graphe contenant n sommets il faudrait effectuer n fois Dijkstra ou n fois Bellman-Ford. On aurait alors comme complexité respective si on execute n fois ces deux algorithmes: $n^{3}$ et $n^{4}$.
 \subsection{Découpage du code}
 
 Nous avons découpé notre code en trois grandes parties, dans des fichiers différents regroupant les catégories communes :
