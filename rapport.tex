@@ -153,7 +153,8 @@ $\alpha$ & A & B & D &   & $\omega$ \\
 \end{figure}
 \subsection{Matrice d'adjacence}
 
-plop
+La matrice d'adjacence d'un graphe est la structure la plus simple associée à ce graphe. Il s'agit d'une matrice ``nombre de noeuds" * ``nombre de noeuds", qui pour une cellule (i,j) associe la valuation de l'arc allant de i à j.\\
+
 \begin{figure}[htdp]
 \begin{center}
 \begin{tabular}{|c|c|c|}
@@ -175,6 +176,8 @@ int ** matrix;
 \end{lstlisting}
 
 \subsection{Tableau de liste chaînées}
+
+La deuxième structure de données qui sert à représenter un graphe est le tableau de liste chaînées. D'une longueur de ``nombre de noeuds", il contient dans chaque case une liste chaînée de successeurs de ce noeud, avec les valuations associées à l'arc allant du noeud indice du tableau au noeud courant.\\
 
 Voilà la définition utilisée dans notre programme de la structure de données de liste chaînées :
 \begin{lstlisting}
@@ -929,18 +932,40 @@ La structure de donnée utilisée ici est la liste chaînée, qui convient parti
 \newpage
 \section{Application réalisée}
 \subsection{Tests}
-Nous avons executé (par le biais de la fonctionnalité ''stress test'' de notre application), plusieurs fois les calculs de plus court chemin sur des graphes de taille différente. A chaque execution le temps était mesuré et exporté dans un fichier csv, nous avons ainsi obtenu des courbes que nous avons pu comparer aux complexités théoriques.
+
+Nous avons exécuté (par le biais de la fonctionnalité ''stress test'' de notre application), plusieurs fois les calculs de plus court chemin sur des graphes de taille différente. A chaque exécution le temps était mesuré et exporté dans un fichier csv, nous avons ainsi obtenu des courbes que nous avons pu comparer aux complexités théoriques.
 \paragraph{Bellman-Ford}
-Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 1000 noeuds.
-%\includegraphics{images/bellman}
-Nous obtenons une courbe qui lorsqu'elle est approximée par une focntion puissnace nous donne quelquechose plus proche de $x^{2}$ que de $x^{3}$. $x^{3}$ étant la complexité dans le pire des cas pour l'algorithme de Bellman-Ford on peut raisonnablement penser que ce pire des cas se présente peu souvent sur des graphes générés aléatoirement.
+Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 1000 noeuds :
+
+\begin{figure}[htpd]
+\begin{center}
+\includegraphics[scale=0.4]{bellman}
+\end{center}
+\caption{Bellman-Ford}
+\end{figure}
+
+Nous obtenons une courbe qui lorsqu'elle est approximée par une fonction puissance nous donne quelque chose plus proche de $x^{2}$ que de $x^{3}$. $x^{3}$ étant la complexité dans le pire des cas pour l'algorithme de Bellman-Ford on peut raisonnablement penser que ce pire des cas se présente peu souvent sur des graphes générés aléatoirement.
 \paragraph{Dijkstra}
-Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 1000 noeuds.
-%\includegraphics{images/dijkstra}
-Cette fois-ci la courbe est approximée avec quelquechose proche de $x^{2}$, nous sommes donc en accord avec la complexité théorique.
+Nous avons exécuté 1000 fois l'algorithme sur des graphes contenant de 1 à 1000 noeuds.
+
+\begin{figure}[htpd]
+\begin{center}
+\includegraphics[scale=0.4]{dijkstra}
+\end{center}
+\caption{Dijkstra}
+\end{figure}
+
+Cette fois-ci la courbe est approximée avec quelque chose proche de $x^{2}$, nous sommes donc en accord avec la complexité théorique.
 \paragraph{Dantzig}
-Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 600 noeuds.
-%\includegraphics{images/dantzig}
+Nous avons exécuté 1000 fois l'algorithme sur des graphes contenant de 1 à 600 noeuds.
+
+\begin{figure}[htpd]
+\begin{center}
+\includegraphics[scale=0.4]{dantzig}
+\end{center}
+\caption{Dantzig}
+\end{figure}
+
 La courbe qui approxime la mesure est proche de $x^{3}$ ce qui est en accord avec la complexité théorique de l'algorithme.
 \paragraph{Comparaison des performances}
 Les équations obtenus nous permettent de classer les algorithmes du plus au moins performant :
@@ -950,7 +975,9 @@ Les équations obtenus nous permettent de classer les algorithmes du plus au moi
 \item Dantzig : $3,3*10^{-8}*x^{2,96}$
 \end{enumerate}
 On observe que Dijkstra est plus performant que Bellman-Ford, ce qui est normal du fait que Dijkstra a été con\c cu comme une amélioration de Bellman-Ford.\\
-Dantzig est le moins performant mais il faut relativiser ce résultat car pour obtenir le même résultat que ce que nous permet d'obtenir dantzig pour un graphe contenant n sommets il faudrait effectuer n fois Dijkstra ou n fois Bellman-Ford. On aurait alors comme complexité respective si on execute n fois ces deux algorithmes: $n^{3}$ et $n^{4}$.
+
+Dantzig est le moins performant mais il faut relativiser ce résultat car pour obtenir le même résultat que cet algorithme pour un graphe contenant n sommets, il faudrait effectuer n fois Dijkstra ou n fois Bellman-Ford. On aurait alors comme complexité respective si on exécuté n fois ces deux algorithmes: $n^{3}$ et $n^{4}$.
+
 \subsection{Découpage du code}
 
 Nous avons découpé notre code en trois grandes parties, dans des fichiers différents regroupant les catégories communes :
