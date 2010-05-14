@@ -112,7 +112,7 @@ Projet d'Axe informatique 2009-2010
 
 Le fait de trouver le plus court chemin dans un graphe (pathfinding en anglais) trouve énormément d'applications dans l'industrie. Un premier exemple d'application qui nous vient à l'esprit est évidemment les utilisations faites dans les GPS pour le calcul d'itinéraires, avec une valuation donnée en fonction de la distance d'un axe, mais également en fonction de l'importance de l'axe, voire même en fonction du trafic et de l'encombrement. D'autres utilisations moins connues sont par exemple les algorithmes associés au routage des données dans un réseau (application très sensible et nécessitant des algorithmes les plus performants possible, afin d'optimiser les temps de réponse entre les routeurs) ou à de l'optimisation de process.\\
 
-Le travail fait ici s'appuie sur les graphes orientés valués, qui sont une forme de graphe la plus générique, et les algorithmes implémentés peuvent très facilement s'adaptés à des graphes non-orientés.\\
+Le travail fait ici s'appuie sur les graphes orientés valués, qui sont une forme de graphe la plus générique. Les algorithmes implémentés ici peuvent donc très facilement s'adapter à des graphes non-orientés.\\
 
 Nous avons pris le parti dans ce projet de ne traiter que des algorithmes trouvant exactement le chemin le plus court et pas un chemin optimisé. Nous avons décidé de ne pas utiliser des algorithmes approchés tels que A* car nous les avons déjà traité en première année dans le cadre du cours de java. Nous avons donc étudié trois algorithmes : L'algorithme de Bellman-Ford, l'algorithme de Dijkstra et l'algorithme de Dantzig.\\
 
@@ -125,7 +125,7 @@ Ce rapport se divise en trois parties principales, présentant d'abord les graph
 Un graphe simple est un couple formé de deux ensembles: \\
 $$G=(X,A)$$ avec X l'ensemble des sommets, et A l'ensemble des arêtes.\\
 $$G=(X,A,v)$$ si on ajoute la possibilité de donner une valeur différentes aux arêtes, nous avons dans ce cas un graphe valué et v est l'ensemble des valuations.\\
-Un graphe peut être non orienté, auquel cas une arête entre un sommet A et B permet aussi bien de se rendre de A en B et de en A. Il peut être aussi orienté, dans ce cas une arête ne peut être parcourue que dans un sens.
+Un graphe peut être non orienté, auquel cas une arête entre un sommet A et B permet aussi bien de se rendre de A en B et de B en A. Il peut être aussi orienté, dans ce cas un arc ne peut être parcourue que dans un sens.
 
 \begin{figure}[htdp]
 \begin{psmatrix}[mnode=circle]
@@ -189,13 +189,15 @@ struct chained_list {
 };
 \end{lstlisting}
 
-Cette structure de donnée permet d'économiser de la mémoire car seul les arêtes existantes sont représentées, cependant les temps d'accès à un élément sont plus couteux étant donné qu'il faut parcourir les prédécesseurs dans la liste d'un élement pour y accéder.
+Cette structure de donnée permet d'économiser de la mémoire car seul les arêtes existantes sont représentées, cependant les temps d'accès à un élément sont plus couteux étant donné qu'il faut parcourir les prédécesseurs dans la liste d'un élement pour y accéder.\\
 
 Nous utilisons un tableau de liste chaînées, dont la déclaration est :
 \begin{lstlisting}
 struct chained_list ** list;
 \end{lstlisting}
-Il s'agit d'un double pointeur, puisqu'il est alloué également dynamiquement, pour les mêmes raisons que la matrice d'adjacence.
+Il s'agit d'un double pointeur, puisqu'il est alloué également dynamiquement, pour les mêmes raisons que la matrice d'adjacence.\\
+
+L'avantage d'une telle structure est sa taille, puisqu'elle n'est en $n^{2}$ que dans le pire des cas, et donc avec des graphes non complets le gain en taille mémoire sera évidemment important. En revanche cette structure ne permet pas un accès direct à un noeud donné, et donc rajoute des complexités lorsqu'il s'agit d'accéder à un noeud particulier.\\
 
 \subsection{Matrice de prédécesseur}
 
@@ -257,14 +259,14 @@ int *** matrix;
 
 Nous avons choisi d'utiliser des entiers pour représenter à la fois les noeuds et aussi leur valeur. Il nous a en effet semblé suffisant de se limiter à INT\_MAX en terme de nombre de noeuds. Cela représente tout de même \nombre{2147483647} noeuds, et une plage de valuation suffisante. La machine sera tout de façon d'abord limitée en terme d'espace mémoire pour les représenter.\\
 
-Dans l'implémentation des algorithmes nous avons surtout utilisé des matrices, par la rapidité de temps d'accès qu'elles permettent, et aussi par la simplicité de l'implémentation qu'elles permettent. Gérer une liste sans index est en effet plus compliqué, avec des algorithmes qui utilisent en permanence des valeurs stockées précédemment. Nous le verrons par la suite, mais tous les algorithmes se servent des valeurs déjà calculées, ou remplacent celles déjà stockées.\\
+Dans l'implémentation des algorithmes nous avons surtout utilisé des matrices, par la rapidité de temps d'accès qu'elles permettent, et aussi par la simplicité de l'implémentation qu'elles permettent. Gérer une liste sans index est en effet plus compliqué, avec des algorithmes utilisés dans ce problème qui utilisent en permanence des valeurs stockées précédemment. Nous le verrons par la suite, mais tous les algorithmes se servent des valeurs déjà calculées, ou remplacent celles déjà stockées.\\
 
 \newpage
 \section{Présentation des trois algorithmes}
 
 Nous avons donc implémenté les trois algorithmes principaux de recherche de chemins, qui sont ceux de Bellman-Ford, de Dijkstra et de Dantzig. Chacun a ses propres particularités, en particulier en terme de champ d'application.\\
 
-Dans la suite de cette partie, nous allons étudier les différents algorithmes sur un même exemple, dont la matrice d'adjacence et la représentation sont données aux figures 5 et 6.\\ % attention au numéro !
+Dans la suite de cette partie, nous allons étudier Dijkstra et Dantzig sur un même exemple, dont la matrice d'adjacence et la représentation sont données aux figures 5 et 6.\\ % attention au numéro !
 
 \begin{figure}[H]
  \centering
@@ -493,8 +495,11 @@ Pour un graphe sans circuit la boucle tant que ne peut pas être parcourue plus 
 
 La complexité de cet algorithme est en $o(n^{3})$ dans le pire des cas (graphe complet et boucle tant que parcourue n fois).
 %%%%%%%%%%%%%Fin de bellman%%%%%%%%%%%%%%%
+
 \subsection{Dijkstra}
+
 Dijkstra permet de trouver la matrice de prédécesseur pour un point de départ donné (identique à Bellman-Ford) et permet de trouver un plus court chemin dans un graphe contenant seulement des valuations positives.\\
+
 Cette fois-ci Dijkstra regarde les successeurs de chaque sommet, le postulat de base de Dijkstra est que pour trouver un plus court chemin il faut passer par le sommet le plus proche de celui où l'on se trouve. Ce qui n'est pas toujours le cas pour un graphe contenant des valuations négatives, par exemple :
 \begin{figure}[H]
 \begin{center}
@@ -744,7 +749,7 @@ tant que degre_graphe <= taille_graphe - 1 et non circuit faire
 |   |        p(i, j) = p(k+1, j);
 \end{lstlisting}
 
-La première partie est une initialisation de la matrice de sortie, comme montré à la figure 7. Il s'agit de donner un coup infini avec aucun prédécesseur à tous les noeuds, sauf la diagonale, où on met un coup nul avec comme prédécesseur le même noeud.\\% attention au numéro !
+La première partie est une initialisation de la matrice de sortie, comme montré à la figure 27. Il s'agit de donner un coup infini avec aucun prédécesseur à tous les noeuds, sauf la diagonale, où on met un coût nul avec comme prédécesseur le même noeud.\\% attention au numéro !
 
 % k = 0
 \begin{figure}[H]
@@ -830,6 +835,8 @@ Une fois la matrice remplie avec les valeurs de départ, on incrémente la taill
 
 Lorsque l'on trouve un tel noeud, on va modifier la matrice de sortie, en notant dans la première colonne de la matrice de prédécesseur la nouvelle distance, et dans la deuxième colonne le noeud par lequel il faut passer.\\
 
+La détection de circuit est faite à la fin de la deuxième partie, en vérifiant que l'on a pas de circuit absorbant.
+
 \begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
@@ -847,7 +854,7 @@ Lorsque l'on trouve un tel noeud, on va modifier la matrice de sortie, en notant
 \caption{Matrice pour k = 2}
 \end{figure}
 
-À chaque fois que le graphe est agrandi, on va revérifier la matrice avec les nouveaux noeuds que l'on a rajouté, pour voir si un chemin plus court ne serait pas obtenu en passant par ces nouveaux noeuds pour atteindre des noeuds qui appartiennent au graphe de niveau inférieur.\\
+À chaque fois que le graphe est agrandi, on va revérifier la matrice avec les nouveaux noeuds que l'on a rajouté, pour voir si un chemin plus court ne serait pas obtenu en passant par ces nouveaux noeuds pour atteindre des noeuds qui appartiennent au graphe de niveau inférieur. C'est la phase d'optimisation présentée dans les figures 32 et 33.\\
 
 % optimisation
 \begin{figure}[h!]
@@ -983,9 +990,13 @@ On observe que Dijkstra est plus performant que Bellman-Ford, ce qui est normal 
 Dantzig est le moins performant mais il faut relativiser ce résultat car pour obtenir le même résultat que cet algorithme pour un graphe contenant n sommets, il faudrait effectuer n fois Dijkstra ou n fois Bellman-Ford. On aurait alors comme complexité respective si on exécuté n fois ces deux algorithmes: $n^{3}$ et $n^{4}$.
 
 \subsection{Difficultées rencontrées}
-La principale difficultée rencontrée a été le manque de temps, nous avions au départ pour objectif de donner le déroulement des algorithmes de fa\c con graphique. Cependant dessinner un graphe n'est pas quelquechose de simple en soi et ces méthodes de dessin pourraient à elle seule faire l'objet d'un projet. \\
-Nous avons alors cherché une librairie nous permettant de dessiner des graphes, la seule que nous avons identifié s'appelle graphviz, mais la documentation que nous avons trouvé n'est pas des plus explicites. Aprés des recherches et des essais nous avons écidé d'arrêter car nous perdions beaucoup de temps sans arriver à un résultat.\\
-Cela nous a empéché de pouvoir implémenter les différents algorithmes en leur donnant en entrée une liste chainée pour représenter le graphe, cependant nous avons une fonction nous permettant à partir d'une matrice de prédécesseurs de donner une liste chainée correspondant au graphe. Il ne reste qu'à réimplémenter les algorithmes.
+
+La principale difficultée rencontrée a été le manque de temps, nous avions au départ pour objectif de donner le déroulement des algorithmes de fa\c con graphique. Cependant dessiner un graphe n'est pas quelque chose de simple en soi et ces méthodes de dessin pourraient à elles seules faire l'objet d'un projet. \\
+
+Nous avons alors cherché une librairie nous permettant de dessiner des graphes, la seule que nous avons identifié s'appelle graphviz, mais la documentation que nous avons trouvé n'est pas des plus explicites. Aprés des recherches et des essais nous avons décidé d'arrêter car nous perdions beaucoup de temps sans arriver à un résultat.\\
+
+Cela nous a empéché de pouvoir implémenter les différents algorithmes en leur donnant en entrée une liste chainée pour représenter le graphe. Cependant nous avons une fonction nous permettant à partir d'une matrice de prédécesseurs de donner une liste chainée correspondant au graphe. Les listes sont également manipulées dans certaines parties des algorithmes. La tâche principale qui devrait être réalisée serait une fonction de recherche dans la liste chaînée, afin d'obtenir le contenu d'un maillon en passant le numéro du noeud.\\
+
 \subsection{Découpage du code}
 
 Nous avons découpé notre code en trois grandes parties, dans des fichiers différents regroupant les catégories communes :
