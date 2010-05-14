@@ -175,6 +175,7 @@ Dans notre programme nous avons utilisé un tableau d'entiers, qui sont alloués
 int ** matrix;
 \end{lstlisting}
 
+Cette structure à l'avantage de présenter des temps d'accès faibles (nous connaissons l'adresse d'une case sans avoir besoin de connaitre l'adresse des autres cases), cependant son occupation mémoire est importante puisqu'elle sera touujours en $n^{2}$ peu importe le graphe.
 \subsection{Tableau de liste chaînées}
 
 La deuxième structure de données qui sert à représenter un graphe est le tableau de liste chaînées. D'une longueur de ``nombre de noeuds", il contient dans chaque case une liste chaînée de successeurs de ce noeud, avec les valuations associées à l'arc allant du noeud indice du tableau au noeud courant.\\
@@ -187,6 +188,8 @@ struct chained_list {
 	struct chained_list * next;
 };
 \end{lstlisting}
+
+Cette structure de donnée permet d'économiser de la mémoire car seul les arêtes existantes sont représentées, cependant les temps d'accès à un élément sont plus couteux étant donné qu'il faut parcourir les prédécesseurs dans la liste d'un élement pour y accéder.
 
 Nous utilisons un tableau de liste chaînées, dont la déclaration est :
 \begin{lstlisting}
@@ -263,7 +266,7 @@ Nous avons donc implémenté les trois algorithmes principaux de recherche de ch
 
 Dans la suite de cette partie, nous allons étudier les différents algorithmes sur un même exemple, dont la matrice d'adjacence et la représentation sont données aux figures 5 et 6.\\ % attention au numéro !
 
-\begin{figure}[htpd]
+\begin{figure}[H]
  \centering
  \begin{psmatrix}[mnode=circle]
 	    & 2\\
@@ -281,7 +284,7 @@ Dans la suite de cette partie, nous allons étudier les différents algorithmes 
   \caption{Le graphe qui est utilisé dans les sections suivantes}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -321,7 +324,7 @@ Bellman Ford fonctionne en regardant pour chaque sommet du graphe les prédéces
 
 Voici le déroulement de l'algorithme de Bellman-Ford sur un graphe d'exemple.
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{psmatrix}[mnode=circle]
  & 2\\
@@ -338,7 +341,7 @@ Voici le déroulement de l'algorithme de Bellman-Ford sur un graphe d'exemple.
 \caption{Etat initial}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -354,7 +357,7 @@ Voici le déroulement de l'algorithme de Bellman-Ford sur un graphe d'exemple.
 \end{figure}
 %Etape 1
 On va visiter le sommet 2 ensuite et on regarde son premier prédecesseur 1.
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{psmatrix}[mnode=circle]
  & {\color{red} \bf 2}\\
@@ -371,7 +374,7 @@ On va visiter le sommet 2 ensuite et on regarde son premier prédecesseur 1.
 \caption{Etape 1}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -387,7 +390,7 @@ On va visiter le sommet 2 ensuite et on regarde son premier prédecesseur 1.
 \end{figure}
 %Etape 2
 On regarde le deuxième prédecesseur de 2 qui est 3, rien ne change.
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{psmatrix}[mnode=circle]
  & {\color{red} \bf 2}\\
@@ -404,7 +407,7 @@ On regarde le deuxième prédecesseur de 2 qui est 3, rien ne change.
 \caption{Etape 2}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -420,7 +423,7 @@ On regarde le deuxième prédecesseur de 2 qui est 3, rien ne change.
 \end{figure}
 %Etape 3
 On regarde le sommet 3 et son unique prédecesseur 1.
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{psmatrix}[mnode=circle]
  & 2\\
@@ -437,7 +440,7 @@ On regarde le sommet 3 et son unique prédecesseur 1.
 \caption{Etape 3}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -453,7 +456,7 @@ On regarde le sommet 3 et son unique prédecesseur 1.
 \end{figure}
 %Etape 4
 Tous les sommets ont été visités et des modifications ont été faites on recommence donc avec le sommet 2. Si l'on regarde le premier prédecesseur 1 la situation ne change pas ce qui n'est pas le cas si l'on regarde le deuxième prédecesseur de 2 c'est à dire 3.
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{psmatrix}[mnode=circle]
  & {\color{red} \bf 2}\\
@@ -470,7 +473,7 @@ Tous les sommets ont été visités et des modifications ont été faites on rec
 \caption{Etape 4}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -493,7 +496,7 @@ La complexité de cet algorithme est en $o(n^{3})$ dans le pire des cas (graphe 
 \subsection{Dijkstra}
 Dijkstra permet de trouver la matrice de prédécesseur pour un point de départ donné (identique à Bellman-Ford) et permet de trouver un plus court chemin dans un graphe contenant seulement des valuations positives.\\
 Cette fois-ci Dijkstra regarde les successeurs de chaque sommet, le postulat de base de Dijkstra est que pour trouver un plus court chemin il faut passer par le sommet le plus proche de celui où l'on se trouve. Ce qui n'est pas toujours le cas pour un graphe contenant des valuations négatives, par exemple :
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{psmatrix}[mnode=circle]
  & 2\\
@@ -546,7 +549,7 @@ On visite le sommet 1 :
 \item Sommets atteignables : 2,3
 \end{itemize}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
  \centering
  \begin{psmatrix}[mnode=circle]
 	    & 2\\
@@ -564,7 +567,7 @@ On visite le sommet 1 :
   \caption{Etat initial}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -586,7 +589,7 @@ Le sommet le plus proche est le sommet 3 on va donc le visiter.
 \item Sommets visités : 1, 3
 \item Sommets atteignables : 2, 4
 \end{itemize}
-\begin{figure}[htpd]
+\begin{figure}[H]
  \centering
  \begin{psmatrix}[mnode=circle]
 	    & 2\\
@@ -604,7 +607,7 @@ Le sommet le plus proche est le sommet 3 on va donc le visiter.
   \caption{Etape 1}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -626,7 +629,7 @@ Le sommet le plus proche non visité est alors 2, on le visite.
 \item Sommets visités : 1, 3, 2
 \item Sommets atteignables : 4
 \end{itemize}
-\begin{figure}[htpd]
+\begin{figure}[H]
  \centering
  \begin{psmatrix}[mnode=circle]
 	    & {\color{red} \bf 2}\\
@@ -644,7 +647,7 @@ Le sommet le plus proche non visité est alors 2, on le visite.
   \caption{Etape 2}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -666,7 +669,7 @@ Seul le sommet 4 est atteignable et est non visité, on le visite.
 \item Sommets visités : 1, 3, 2, 4
 \item Sommets atteignables : -
 \end{itemize}
-\begin{figure}[htpd]
+\begin{figure}[H]
  \centering
  \begin{psmatrix}[mnode=circle]
 	    & 2\\
@@ -684,7 +687,7 @@ Seul le sommet 4 est atteignable et est non visité, on le visite.
   \caption{Etape 3}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -744,7 +747,7 @@ tant que degre_graphe <= taille_graphe - 1 et non circuit faire
 La première partie est une initialisation de la matrice de sortie, comme montré à la figure 7. Il s'agit de donner un coup infini avec aucun prédécesseur à tous les noeuds, sauf la diagonale, où on met un coup nul avec comme prédécesseur le même noeud.\\% attention au numéro !
 
 % k = 0
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{psmatrix}[mnode=circle]
 {\color{red} \bf 1}\\
@@ -753,7 +756,7 @@ La première partie est une initialisation de la matrice de sortie, comme montr�
 \caption{initialisation}
 \end{figure}
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -807,7 +810,7 @@ La première partie est une initialisation de la matrice de sortie, comme montr�
 Une fois la matrice remplie avec les valeurs de départ, on incrémente la taille du graphe jusqu'à obtenir le graphe total. Le principe est de chercher un noeud appartenant au graphe déjà calculé, qui minimise la distance déjà obtenue entre le noeud de départ est le noeud que l'on veut ajouter au graphe. Il s'agit donc de trouver un noeud intermédiaire entre i (noeud de départ) et  k+1 (noeud d'arrivée) qui minimise la distance entre ces deux extrémités.\\
 
 % k = 2
-\begin{figure}[htpd]
+\begin{figure}[H]
  \centering
  \begin{psmatrix}[mnode=circle]
 	    & {\color{red} \bf 2}\\
@@ -827,7 +830,7 @@ Une fois la matrice remplie avec les valeurs de départ, on incrémente la taill
 
 Lorsque l'on trouve un tel noeud, on va modifier la matrice de sortie, en notant dans la première colonne de la matrice de prédécesseur la nouvelle distance, et dans la deuxième colonne le noeud par lequel il faut passer.\\
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -931,13 +934,14 @@ La structure de donnée utilisée ici est la liste chaînée, qui convient parti
 
 \newpage
 \section{Application réalisée}
+L'application que nous avons réalisée comporte une interface graphique, ainsi son fonctionnement est plutôt intuitif et il est facile de changer des paramètres et de relancer un calcul de plus court chemin sans avoir à relancer le programme.
 \subsection{Tests}
 
 Nous avons exécuté (par le biais de la fonctionnalité ''stress test'' de notre application), plusieurs fois les calculs de plus court chemin sur des graphes de taille différente. A chaque exécution le temps était mesuré et exporté dans un fichier csv, nous avons ainsi obtenu des courbes que nous avons pu comparer aux complexités théoriques.
 \paragraph{Bellman-Ford}
 Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 1000 noeuds :
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.4]{bellman}
 \end{center}
@@ -948,7 +952,7 @@ Nous obtenons une courbe qui lorsqu'elle est approximée par une fonction puissa
 \paragraph{Dijkstra}
 Nous avons exécuté 1000 fois l'algorithme sur des graphes contenant de 1 à 1000 noeuds.
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.4]{dijkstra}
 \end{center}
@@ -959,7 +963,7 @@ Cette fois-ci la courbe est approximée avec quelque chose proche de $x^{2}$, no
 \paragraph{Dantzig}
 Nous avons exécuté 1000 fois l'algorithme sur des graphes contenant de 1 à 600 noeuds.
 
-\begin{figure}[htpd]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[scale=0.4]{dantzig}
 \end{center}
@@ -978,6 +982,10 @@ On observe que Dijkstra est plus performant que Bellman-Ford, ce qui est normal 
 
 Dantzig est le moins performant mais il faut relativiser ce résultat car pour obtenir le même résultat que cet algorithme pour un graphe contenant n sommets, il faudrait effectuer n fois Dijkstra ou n fois Bellman-Ford. On aurait alors comme complexité respective si on exécuté n fois ces deux algorithmes: $n^{3}$ et $n^{4}$.
 
+\subsection{Difficultées rencontrées}
+La principale difficultée rencontrée a été le manque de temps, nous avions au départ pour objectif de donner le déroulement des algorithmes de fa\c con graphique. Cependant dessinner un graphe n'est pas quelquechose de simple en soi et ces méthodes de dessin pourraient à elle seule faire l'objet d'un projet. \\
+Nous avons alors cherché une librairie nous permettant de dessiner des graphes, la seule que nous avons identifié s'appelle graphviz, mais la documentation que nous avons trouvé n'est pas des plus explicites. Aprés des recherches et des essais nous avons écidé d'arrêter car nous perdions beaucoup de temps sans arriver à un résultat.\\
+Cela nous a empéché de pouvoir implémenter les différents algorithmes en leur donnant en entrée une liste chainée pour représenter le graphe, cependant nous avons une fonction nous permettant à partir d'une matrice de prédécesseurs de donner une liste chainée correspondant au graphe. Il ne reste qu'à réimplémenter les algorithmes.
 \subsection{Découpage du code}
 
 Nous avons découpé notre code en trois grandes parties, dans des fichiers différents regroupant les catégories communes :
