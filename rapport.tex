@@ -837,6 +837,28 @@ La complexité de Dijkstra dans le pire des cas est en $o(n^{2})$ car pour chaqu
 \newpage
 \section{Application réalisée}
 \subsection{Tests}
+Nous avons executé (par le biais de la fonctionnalité ''stress test'' de notre application), plusieurs fois les calculs de plus court chemin sur des graphes de taille différente. A chaque execution le temps était mesuré et exporté dans un fichier csv, nous avons ainsi obtenu des courbes que nous avons pu comparer aux complexités théoriques.
+\paragraph{Bellman-Ford}
+Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 1000 noeuds.
+%\includegraphics{images/bellman}
+Nous obtenons une courbe qui lorsqu'elle est approximée par une focntion puissnace nous donne quelquechose plus proche de $x^{2}$ que de $x^{3}$. $x^{3}$ étant la complexité dans le pire des cas pour l'algorithme de Bellman-Ford on peut raisonnablement penser que ce pire des cas se présente peu souvent sur des graphes générés aléatoirement.
+\paragraph{Dijkstra}
+Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 1000 noeuds.
+%\includegraphics{images/dijkstra}
+Cette fois-ci la courbe est approximée avec quelquechose proche de $x^{2}$, nous sommes donc en accord avec la complexité théorique.
+\paragraph{Dantzig}
+Nous avons executé 1000 fois l'algorithme sur des graphes contenant de 1 à 600 noeuds.
+%\includegraphics{images/dantzig}
+La courbe qui approxime la mesure est proche de $x^{3}$ ce qui est en accord avec la complexité théorique de l'algorithme.
+\paragraph{Comparaison des performances}
+Les équations obtenus nous permettent de classer les algorithmes du plus au moins performant :
+\begin{enumerate}
+\item Dijkstra :  $1,2*10^{-7}*x^{1,73}$
+\item Bellman-Ford :  $9,4*10^{-8}*x^{1,99}$
+\item Dantzig : $3,3*10^{-8}*x^{2,96}$
+\end{enumerate}
+On observe que Dijkstra est plus performant que Bellman-Ford, ce qui est normal du fait que Dijkstra a été con\c cu comme une amélioration de Bellman-Ford.\\
+Dantzig est le moins performant mais il faut relativiser ce résultat car pour obtenir le même résultat que ce que nous permet d'obtenir dantzig pour un graphe contenant n sommets il faudrait effectuer n fois Dijkstra ou n fois Bellman-Ford. On aurait alors comme complexité respective si on execute n fois ces deux algorithmes: $n^{3}$ et $n^{4}$.
 \subsection{Découpage du code}
 
 \begin{itemize}
